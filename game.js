@@ -6,12 +6,11 @@ const readLine = require('readline-sync');
 const chalk = require('chalk');
 const field = require('./field.js');
 const fs = require('fs');
-const topScores = require('./topScores.js');
-const result1 = require('./result.json');
 const fakeLoad = require('./fakeload.js');
 const mpg = require('mpg123');
 const elements = require('./menuElements.js');
 
+//game függvények
 const game = () => {
   let map = field.matrixGenerator(20, 41, 0);
   map = field.finishMaker(map);
@@ -119,6 +118,8 @@ const game = () => {
     }
   };
 
+
+  //hibás check függvény
   const check = (matr, obj, time) => {
     for (let row = 1; row < matr.length; row++) {
       for (let col = 4; col < matr[row].length - 4; col++) {
