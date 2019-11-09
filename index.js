@@ -3,11 +3,16 @@ const elements = require('./menuElements.js');
 const termMenu = require('terminal-menu');
 const readLine = require('readline-sync');
 const game = require('./game.js');
+const mpg = require('mpg123');
 
 
 const mainMenu = () => {
   term.clear();
   elements.mainMenuTitle();
+  
+  let player = new mpg.MpgPlayer();
+  player.play('./brekeges.mp3');
+
   const menu = termMenu({
     width: 12,
     x: 14,
@@ -30,7 +35,7 @@ const mainMenu = () => {
       term.clear();
       elements.topScorers();
       const key = readLine.keyIn('\n');
-      if (key === 'q' || key === 'Q') {
+      if (key === 'x' || key === 'X') {
         menu.reset();
       } else if (key === 'p' || key === 'P') {
         term.reset();
@@ -40,7 +45,7 @@ const mainMenu = () => {
       term.clear();
       elements.help();
       const key = readLine.keyIn('\n');
-      if (key === 'q' || key === 'Q') {
+      if (key === 'x' || key === 'X') {
         menu.reset();
       } else if (key === 'p' || key === 'P') {
         term.reset();

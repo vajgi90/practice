@@ -8,7 +8,9 @@ const field = require('./field.js');
 const fs = require('fs');
 const topScores = require('./topScores.js');
 const result1 = require('./result.json');
-
+const fakeLoad = require('./fakeload.js');
+const mpg = require('mpg123');
+const elements = require('./menuElements.js');
 
 const game = () => {
   let map = field.matrixGenerator(20, 41, 0);
@@ -21,10 +23,12 @@ const game = () => {
   let oCheck = true;
   let wCheck = true;
   let timeTick = 0;
-  let timeStartAt = 45;
+  let timeStartAt = 53;
   let tick = 4;
 
   let userName = readLine.question('Please give me your username: ');
+  let player = new mpg.MpgPlayer();
+  player.play('./zene.mp3');
 
   let resultJson = fs.readFileSync('result.json');
   let result = JSON.parse(resultJson);
@@ -39,24 +43,24 @@ const game = () => {
       if (key === 'a' && field.westBorder(cord)) {
         field.frogLeft(cord);
         console.clear();
-        console.log(field.layer(map, cord, fCheck, lCheck, oCheck, wCheck));
+        console.log(field.layer(map, cord, fCheck, lCheck, oCheck, wCheck, timeStartAt, points, life));
       }
       if (key === 'd' && field.eastBorder(cord)) {
         field.frogRight(cord);
         console.clear();
-        console.log(field.layer(map, cord, fCheck, lCheck, oCheck, wCheck));
+        console.log(field.layer(map, cord, fCheck, lCheck, oCheck, wCheck, timeStartAt, points, life));
       }
       if (key === 'w' && field.northBorder(cord, fCheck, lCheck, oCheck, wCheck)) {
         field.frogUp(cord);
         console.clear();
-        console.log(field.layer(map, cord, fCheck, lCheck, oCheck, wCheck));
+        console.log(field.layer(map, cord, fCheck, lCheck, oCheck, wCheck, timeStartAt, points, life));
       }
       if (key === 's' && field.southBorder(cord)) {
         field.frogDown(cord);
         console.clear();
-        console.log(field.layer(map, cord, fCheck, lCheck, oCheck, wCheck));
+        console.log(field.layer(map, cord, fCheck, lCheck, oCheck, wCheck, timeStartAt, points, life));
       }
-      if (key === 'p') {
+      if (key === 'x') {
         result[userName] = points;
         let jsonBoard = JSON.stringify(result);
         fs.writeFileSync('result.json', jsonBoard);
@@ -67,9 +71,9 @@ const game = () => {
     console.clear();
   };
 
-  const car1 = [7, 7, 7];
-  const car2 = [6, 6, 6];
-  const car3 = [5, 5];
+  const car1 = [7, 7, 7, 7];
+  const car2 = [6, 6, 6, 6];
+  const car3 = [5, 5, 5];
 
   const treeLog1 = [4, 4, 4, 4, 4];
   const treeLog2 = [2, 2, 2, 2, 2];
@@ -82,10 +86,20 @@ const game = () => {
     timeStartAt = 45;
   };
 
+  const reset2 = () => {
+    fCheck = true;
+    lCheck = true;
+    oCheck = true;
+    wCheck = true;
+    life = 4;
+    cord.row = 18;
+    cord.col = 20;
+    timeStartAt = 45;
+  };
+
   const finishChecker = (obj) => {
     if (!fCheck && !lCheck && !oCheck && !wCheck) {
-      reset();
-      game();
+      reset2();
     } else if (obj.row === 0 && obj.col === 8 && fCheck) {
       points += 50;
       fCheck = false;
@@ -109,7 +123,8 @@ const game = () => {
     for (let row = 1; row < matr.length; row++) {
       for (let col = 4; col < matr[row].length - 4; col++) {
         if (matr[row][col] === 0 && row === obj.row && col === obj.col && row < 9) {
-        // river
+          life -= 1;
+          reset();
         } else if (
           (matr[row][col] === 7 && row === obj.row && col === obj.col) ||
         (matr[row][col] === 6 && row === obj.row && col === obj.col) ||
@@ -124,8 +139,14 @@ const game = () => {
           break;
         }
         if (life === 0) {
-          console.log('Elfogytak az életeid');
-          process.exit();
+          elements.gameOver();
+          const key = readLine.keyIn('\n');
+          if (key === 'x' || key === 'X') {
+            process.exit();
+          } else if (key === 'p' || key === 'P') {
+            reset2();
+            field.standardInput();
+          }
         }
         if (time === 0) {
           console.clear();
@@ -149,14 +170,15 @@ const game = () => {
     if (tick % 5 === 0) {
       timeStartAt--;
     }
-    console.log(`${timeStartAt} second(s) left.`);
   };
+
+
 
   setInterval(() => {
     check(map, cord, timeStartAt);
-
+    fakeLoad.fakeLoad();
     console.clear();
-    field.move(map[1], treeLog2, -1, tick, 8, tick / 1);
+    field.move(map[1], treeLog2, -1, tick, 8, tick / 4);
     field.move(map[2], treeLog1, 1, tick, 17, tick / 4);
     field.move(map[3], treeLog2, -1, tick, 19, tick / 4);
     field.move(map[4], treeLog1, 1, tick, 19, tick / 4);
@@ -165,7 +187,7 @@ const game = () => {
     field.move(map[7], treeLog2, -1, tick, 9, tick / 4);
     field.move(map[8], treeLog2, -1, tick, 9, tick / 4);
 
-    field.move(map[10], car1, 1, tick, 25, 0.2);
+    field.move(map[10], car1, 1, tick, 25, 0.25);
     field.move(map[11], car2, -1, tick, 15, 2);
     field.move(map[12], car2, -1, tick, 8, 3);
     field.move(map[13], car3, 1, tick, 11, 3);
@@ -174,15 +196,17 @@ const game = () => {
     field.move(map[16], car2, -1, tick, 18, 2);
     field.move(map[17], car3, 1, tick, 20, 2);
 
-    console.log(field.layer(map, cord, fCheck, lCheck, oCheck, wCheck));
+    console.log(field.layer(map, cord, fCheck, lCheck, oCheck, wCheck, timeStartAt, points, life));
     timer(timeTick);
-    console.log(`Life: ${life}`);
-    console.log(`Points: ${points}`);
+    field.arcadeTime(map, timeStartAt);
+    field.arcadePoints(map, points);
+    field.arcadeLife(map, life);
     finishChecker(cord);
     timeTick += 1;
     tick += 1;
   }, 200);
 };
+
 module.exports = {
   game: game
 };

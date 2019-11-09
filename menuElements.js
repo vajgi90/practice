@@ -42,9 +42,8 @@ const topScorers = () => {
   topScores.statGen();
   console.log('\n');
   term.yellow();
-  console.log(`  Press "p" if you want to start the game and "q" if you want to quit.`);
+  console.log(`  Press "p" if you want to start the game and "x" if you want to quit.`);
 };
-
 
 const help = () => {
   term.red();
@@ -66,11 +65,40 @@ const help = () => {
   console.log('  In this game you have 4 frogs. To finish a level you have to lead all of them' + ('\n') + '  towards the end points. End points are marked with the "F", "L", "O" and "W"' + ('\n') + '  letters. Use the "W" key to move up, "S" to move down, "A" to move left and' + ('\n') + '  "D" to move right. You have 60 seconds to finish the task and the goal is' + ('\n') + '  to be as quick as possible. Don\'t let cars to hit you on the road and avoid' + ('\n') + '  drowning in the river by using the tree logs when crossing it.');
   console.log('\n');
   term.yellow();
-  console.log(`  Press "p" if you want to start the game and "q" if you want to quit.`);
+  console.log(`  Press "p" if you want to start the game and "x" if you want to quit.`);
+};
+
+const gameOver = () => {
+  term.red();
+  console.log('       ____                         ___');
+  console.log('      / ___| __ _ _ __ ___   ___   / _ \\__   _____ _ __');
+  console.log('     | |  _ / _` | \'_ ` _ \\ / _ \\ | | | \\ \\ / / _ \\ \'__|');
+  console.log('     | |_| | \(_| | | | | | |  __/ | |_| |\\ V /  __/ |  ');
+  console.log('      \\____|\\__,_|_| |_| |_|\\___|  \\___/  \\_/ \\___|_|  ');
+  console.log('\n');
+  term.green();
+  console.log('                      ___      ___ ');
+  console.log('                     /___\\----/___\\ ');
+  console.log('                    |  X  |  |  X  | ');
+  console.log('                    /\\___/    \\___/\\ ');
+  console.log('                  -|      o  o      |-');
+  console.log('                 /  \\______________/  \\ ');
+  console.log('                 \\ \\ |   |    |   | / / ');
+  console.log('                  ww ooooo----ooooo ww ');
+  console.log('\n');
+  term.white();
+  let quote = ('           \"Theories pass. The frog remains.\" ');
+  let quoteOf = ('                                                     - Jean Rostand -');
+  term.bold(quote);
+  console.log(quoteOf);
+  console.log('\n');
+  term.yellow();
+  console.log(`  Press "p" if you want to start the game and "x" if you want to quit.`);
 };
 
 module.exports = {
   mainMenuTitle: mainMenuTitle,
   topScorers: topScorers,
-  help: help
+  help: help, 
+  gameOver: gameOver
 };
